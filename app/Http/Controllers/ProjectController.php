@@ -53,7 +53,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        return view('projects.show', compact('project'));
     }
 
     /**
@@ -61,7 +61,8 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        //
+        $techStacks = \App\Models\TechStack::all();
+        return view('projects.edit', compact('project', 'techStacks'));
     }
 
     /**
@@ -69,7 +70,24 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required',
+            'github_url' => 'nullable|url',
+            'image' => 'nullable|image',
+            'tech_stack_ids' => 'array'
+        ]);
+    
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('project_images', 'public');
+        }
+    
+        $project->update($validated);
+        $project->techStacks()->sync($request->input('tech_stack_ids', []));
+    
+        return redirect()
+            ->route('projects.show', $project)
+            ->with('success', 'Project updated successfully!');
     }
 
     /**

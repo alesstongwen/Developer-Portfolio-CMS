@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-2xl mx-auto mt-10">
+<div class="max-w-2xl mx-auto px-6 py-12 mt-10">
     <h1 class="text-2xl font-bold mb-6">Edit Project</h1>
 
     <form action="{{ route('projects.update', $project) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
@@ -42,7 +42,7 @@
             @endforeach
         </div>
 
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Update Project</button>
+        <button type="submit" class="bg-blue-600 text-black px-4 py-2 rounded hover:bg-blue-700">Update Project</button>
     </form>
 </div>
 @endsection
