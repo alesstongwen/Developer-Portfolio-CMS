@@ -10,7 +10,7 @@
         </div>
     @endif
 
-    <a href="{{ route('projects.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-4 inline-block">+ Add New Project</a>
+    <a href="{{ route('projects.create') }}" class="bg-blue-600 text-green px-4 py-2 rounded mb-4 inline-block">+ Add New Project</a>
 
     @forelse ($projects as $project)
         <div class="bg-white shadow p-4 mb-4 rounded">
