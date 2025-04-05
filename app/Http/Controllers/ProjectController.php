@@ -42,8 +42,11 @@ class ProjectController extends Controller
             $validated['image'] = $request->file('image')->store('project_images', 'public');
         }
     
-        $project = auth()->user()->projects()->create($validated);
-        $project->techStacks()->sync($request->input('tech_stack_ids'));
+        $project = new Project($validated);
+        $project->user_id = auth()->id(); // associate project with logged-in user
+        $project->save();
+    
+        $project->techStacks()->sync($request->input('tech_stack_ids', []));
     
         return redirect()->route('projects.index')->with('success', 'Project created!');
     }
