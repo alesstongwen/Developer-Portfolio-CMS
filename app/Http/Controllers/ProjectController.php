@@ -30,17 +30,28 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
+        \Log::debug('Validation input:', $request->all());
+        dd($request->file('image'));
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required',
             'github_url' => 'nullable|url',
-            'image' => 'nullable|image',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:5120', 
             'tech_stack_ids' => 'array'
         ]);
     
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('project_images', 'public');
+            \Log::info('Image file detected!');
+            \Log::debug('Uploaded image type: ' . $request->file('image')->getMimeType());
+            
+            $path = $request->file('image')->store('project_images', 'public');
+            \Log::info('Image stored at: ' . $path);
+        
+            $validated['image'] = $path;
+        } else {
+            \Log::warning('No image found in the request!');
         }
+        
     
         $project = new Project($validated);
         $project->user_id = auth()->id(); // associate project with logged-in user
@@ -77,12 +88,14 @@ class ProjectController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required',
             'github_url' => 'nullable|url',
-            'image' => 'nullable|image',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:5120', 
             'tech_stack_ids' => 'array'
         ]);
     
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('project_images', 'public');
+        } else {
+            unset($validated['image']); // ← prevent overwriting existing image
         }
     
         $project->update($validated);

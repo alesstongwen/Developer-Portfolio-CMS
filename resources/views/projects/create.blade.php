@@ -35,15 +35,15 @@
         <div>
     <label class="block font-semibold">Image</label>
 
-    @if(old('image'))
-    <img id="preview" src="{{ asset('storage/' . old('image')) }}" class="h-20 mb-2 rounded">
-    @else
     <img id="preview" class="h-20 mb-2 rounded hidden">
-    @endif
 
+    @error('image')
+        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+    @enderror
 
     <input name="image" type="file" class="block" accept="image/*" onchange="previewImage(event)">
 </div>
+
 
 <script>
     function previewImage(event) {
