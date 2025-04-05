@@ -28,39 +28,44 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        \Log::debug('Validation input:', $request->all());
-        dd($request->file('image'));
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required',
-            'github_url' => 'nullable|url',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:5120', 
-            'tech_stack_ids' => 'array'
-        ]);
-    
-        if ($request->hasFile('image')) {
-            \Log::info('Image file detected!');
-            \Log::debug('Uploaded image type: ' . $request->file('image')->getMimeType());
-            
-            $path = $request->file('image')->store('project_images', 'public');
-            \Log::info('Image stored at: ' . $path);
-        
-            $validated['image'] = $path;
-        } else {
-            \Log::warning('No image found in the request!');
-        }
-        
-    
-        $project = new Project($validated);
-        $project->user_id = auth()->id(); // associate project with logged-in user
-        $project->save();
-    
-        $project->techStacks()->sync($request->input('tech_stack_ids', []));
-    
-        return redirect()->route('projects.index')->with('success', 'Project created!');
-    }
+
+     public function store(Request $request)
+     {
+         \Log::debug('Validation input:', $request->all());
+         
+         $validated = $request->validate([
+             'title' => 'required|string|max:255',
+             'description' => 'required',
+             'github_url' => 'nullable|url',
+             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:5120', 
+             'tech_stack_ids' => 'array'
+         ]);
+     
+         if ($request->hasFile('image')) {
+             $file = $request->file('image');
+         
+             if ($file->isValid()) {
+                 $path = $file->store('project_images', 'public');
+                 \Log::debug('✅ Image stored at: ' . $path);
+                 $validated['image'] = $path;
+             } else {
+                 \Log::debug('❌ Uploaded file is not valid.', [
+                     'errorCode' => $file->getError(),
+                     'originalName' => $file->getClientOriginalName()
+                 ]);
+             }
+         } else {
+             \Log::debug('❌ No image file present in request.');
+         }
+         
+         $project = new Project($validated);
+         $project->user_id = auth()->id(); // associate project with logged-in user
+         $project->save();
+     
+         $project->techStacks()->sync($request->input('tech_stack_ids', []));
+     
+         return redirect()->route('projects.index')->with('success', 'Project created!');
+     }
 
     /**
      * Display the specified resource.
