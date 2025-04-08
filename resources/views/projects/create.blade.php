@@ -63,7 +63,6 @@
 
 
         <div>
-            <label class="block text-gray-700 font-medium mb-2">Tech Stack</label>
             <div class="flex flex-wrap gap-3">
                 @foreach ($techStacks as $stack)
                     <label class="flex items-center text-sm">
@@ -75,7 +74,7 @@
         </div>
 
         <div class="pt-6">
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-black font-semibold px-6 py-2 rounded shadow transition">
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded shadow transition">
                 Save Project
             </button>
         </div>
