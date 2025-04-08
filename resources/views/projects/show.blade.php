@@ -30,8 +30,16 @@
         </p>
     @endif
 
-    <a href="{{ route('projects.edit', $project) }}" class="inline-block mt-6 bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-600">
+    <form action="{{ route('projects.edit', $project) }}" method="GET">
+    <button type="submit" class="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-600">
         Edit Project
-    </a>
+    </button>
+</form>
+    <form action="{{ route('projects.destroy', $project) }}" method="POST" class="mt-6">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Remove Project</button>
+    </form>
+</form>
 </div>
 @endsection
