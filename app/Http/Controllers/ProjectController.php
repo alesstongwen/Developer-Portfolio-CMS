@@ -116,6 +116,24 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        if ($project->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+    
+        // Delete the image from storage if it exists
+        if ($project->image && \Storage::disk('public')->exists($project->image)) {
+            \Storage::disk('public')->delete($project->image);
+            \Log::debug('🗑️ Deleted image: ' . $project->image);
+        }
+    
+        // Detach tech stacks (optional, for clean pivot table)
+        $project->techStacks()->detach();
+    
+        // Delete the project
+        $project->delete();
+    
+        return redirect()
+            ->route('projects.index')
+            ->with('success', 'Project deleted successfully!');
     }
 }

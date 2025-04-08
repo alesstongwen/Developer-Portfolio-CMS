@@ -20,6 +20,8 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+
 Route::get('/test-view', function () {
     return view('projects.index', ['projects' => []]);
 });

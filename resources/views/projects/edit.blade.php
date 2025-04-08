@@ -65,5 +65,10 @@
 
         <button type="submit" class="bg-blue-600 text-black px-4 py-2 rounded hover:bg-blue-700">Update Project</button>
     </form>
+    <form action="{{ route('projects.destroy', $project) }}" method="POST" class="mt-6">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Remove Project</button>
+    </form>
 </div>
 @endsection
