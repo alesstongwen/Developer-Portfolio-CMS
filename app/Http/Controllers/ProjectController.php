@@ -31,7 +31,17 @@ class ProjectController extends Controller
 
      public function store(Request $request)
      {
-         \Log::debug('Validation input:', $request->all());
+        \Log::debug('Request details:', [
+            'method' => $request->method(), 
+            'has_file' => $request->hasFile('image'),
+            'content_type' => $request->header('Content-Type'),
+            'all_headers' => $request->headers->all()
+        ]);
+        \Log::debug('Files info:', [
+            'all_files' => $request->allFiles(),
+            'file_key_exists' => $request->has('image'),
+            'file_object_type' => $request->file('image') ? get_class($request->file('image')) : 'null'
+        ]);
          
          $validated = $request->validate([
              'title' => 'required|string|max:255',
@@ -43,6 +53,12 @@ class ProjectController extends Controller
      
          if ($request->hasFile('image')) {
              $file = $request->file('image');
+             \Log::debug('File details:', [
+                'exists' => $file->isValid(), 
+                'size' => $file->getSize(),
+                'error' => $file->getError(),
+                'errorMessage' => $this->getUploadErrorMessage($file->getError())
+            ]);
          
              if ($file->isValid()) {
                  $path = $file->store('project_images', 'public');
@@ -135,5 +151,17 @@ class ProjectController extends Controller
         return redirect()
             ->route('projects.index')
             ->with('success', 'Project deleted successfully!');
+    }
+    private function getUploadErrorMessage($errorCode) {
+        $errors = [
+            UPLOAD_ERR_INI_SIZE => 'File exceeds upload_max_filesize',
+            UPLOAD_ERR_FORM_SIZE => 'File exceeds MAX_FILE_SIZE in form',
+            UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
+            UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+            UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary folder',
+            UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+            UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the upload'
+        ];
+        return $errors[$errorCode] ?? 'Unknown upload error';
     }
 }
