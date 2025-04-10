@@ -26,4 +26,13 @@ Route::get('/test-view', function () {
     return view('projects.index', ['projects' => []]);
 });
 
+// Add this to a temporary route to check your PHP settings
+Route::get('/phpinfo', function() {
+    echo 'upload_max_filesize: ' . ini_get('upload_max_filesize') . '<br>';
+    echo 'post_max_size: ' . ini_get('post_max_size') . '<br>';
+    echo 'memory_limit: ' . ini_get('memory_limit') . '<br>';
+    echo 'max_file_uploads: ' . ini_get('max_file_uploads') . '<br>';
+    echo 'temp directory: ' . sys_get_temp_dir() . '<br>';
+});
+
 require __DIR__.'/auth.php';
